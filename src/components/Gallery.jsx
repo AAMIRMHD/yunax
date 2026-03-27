@@ -12,7 +12,7 @@ const images = [
 
 const categories = ['All', 'Security', 'Networking', 'Infrastructure', 'Services', 'Custom PC Building', 'Work Station'];
 
-const GalleryCard = ({ src, category, desc, onClick }) => {
+const GalleryCard = ({ src, category, desc }) => {
   const ref = useRef(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -38,10 +38,9 @@ const GalleryCard = ({ src, category, desc, onClick }) => {
     <motion.div
       ref={ref}
       layout
-      className="rounded-2xl overflow-hidden relative group cursor-pointer h-72 shadow-lg"
+      className="rounded-2xl overflow-hidden relative group shadow-lg h-72"
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
-      onClick={onClick}
       style={{ rotateX: springX, rotateY: springY, transformStyle: 'preserve-3d' }}
       whileHover={{ y: -6 }}
       transition={{ type: 'spring', stiffness: 220, damping: 18 }}
@@ -66,7 +65,6 @@ const GalleryCard = ({ src, category, desc, onClick }) => {
 
 const Gallery = () => {
   const [active, setActive] = useState('All');
-  const [lightbox, setLightbox] = useState(null);
 
   const filtered = useMemo(() => {
     if (active === 'All') return images;
@@ -102,33 +100,11 @@ const Gallery = () => {
               src={item.src}
               category={item.category}
               desc={item.desc}
-              onClick={() => setLightbox(item.src)}
+              onClick={null}
             />
           ))}
         </div>
       </div>
-
-      <AnimatePresence>
-        {lightbox && (
-          <motion.div
-            className="fixed inset-0 blur-backdrop z-50 grid place-items-center p-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setLightbox(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: 'spring', stiffness: 160, damping: 15 }}
-              className="max-w-4xl w-full rounded-2xl overflow-hidden neon-border"
-            >
-              <img src={lightbox} alt="lightbox" className="w-full h-full object-cover" />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   );
 };

@@ -1,6 +1,4 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
-import Lightbox from './Lightbox';
 
 const services = [
   { title: 'IT Consultancy', img: 'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=800&q=80', desc: 'Full-stack IT advisory covering security posture, infrastructure health checks, backup strategy, and network architecture. We benchmark your estate against business outcomes and deliver a prioritized, actionable roadmap.' },
@@ -10,43 +8,35 @@ const services = [
   { title: 'IT Infrastructure', img: 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=800&q=80', desc: 'Resilient, scalable infrastructure spanning compute, storage, and cloud—built for uptime, efficiency, and future growth.' },
 ];
 
-const ServiceCard = ({ title, img, desc }) => {
-  const [open, setOpen] = useState(false);
-  return (
-    <>
-      <motion.div
-        className="relative group h-72 rounded-2xl overflow-hidden glass neon-border card-glow cursor-pointer"
-        whileHover={{ y: -6, scale: 1.02 }}
-        transition={{ type: 'spring', stiffness: 180, damping: 16 }}
-        onClick={() => setOpen(true)}
-      >
-        <motion.img
-          src={img}
-          alt={title}
-          className="absolute inset-0 w-full h-full object-cover opacity-90"
-          whileHover={{ scale: 1.06 }}
-          transition={{ duration: 0.4 }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-white/0 via-white/40 to-white/80" />
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500" style={{ background: 'radial-gradient(circle at 30% 20%, rgba(14,165,233,0.2), transparent 40%)' }} />
-        <div className="absolute top-4 right-4 w-20 h-20 rounded-full bg-gradient-to-br from-[#7dd1ff]/40 to-[#f6c866]/20 blur-3xl" />
-        <div className="absolute bottom-0 p-6 space-y-2 z-10 text-slate-900">
-          <div className="text-2xl font-semibold text-slate-900">{title}</div>
-          <div className="h-[1px] w-14 bg-gradient-to-r from-[#7dd1ff] to-[#f6c866]" />
-          <p className="text-slate-700 text-sm">Adaptive, resilient, and precision-built solutions tailored to your environment.</p>
-        </div>
-        <motion.div
-          className="absolute inset-0"
-          style={{ background: 'linear-gradient(120deg, rgba(125,209,255,0.25), rgba(246,200,102,0.05))' }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0, 0.25, 0] }}
-          transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
-        />
-      </motion.div>
-      <Lightbox open={open} onClose={() => setOpen(false)} image={img} title={title} desc={desc} />
-    </>
-  );
-};
+const ServiceCard = ({ title, img }) => (
+  <motion.div
+    className="relative group h-72 rounded-2xl overflow-hidden glass neon-border card-glow"
+    whileHover={{ y: -6, scale: 1.02 }}
+    transition={{ type: 'spring', stiffness: 180, damping: 16 }}
+  >
+    <motion.img
+      src={img}
+      alt={title}
+      className="absolute inset-0 w-full h-full object-cover opacity-90"
+      whileHover={{ scale: 1.06 }}
+      transition={{ duration: 0.4 }}
+    />
+    <div className="absolute inset-0 bg-gradient-to-b from-white/0 via-white/40 to-white/80" />
+    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500" style={{ background: 'radial-gradient(circle at 30% 20%, rgba(14,165,233,0.2), transparent 40%)' }} />
+    <div className="absolute top-4 right-4 w-20 h-20 rounded-full bg-gradient-to-br from-[#7dd1ff]/40 to-[#f6c866]/20 blur-3xl" />
+    <div className="absolute bottom-0 p-6 space-y-2 z-10 text-slate-900">
+      <div className="text-2xl font-semibold text-slate-900">{title}</div>
+      <div className="h-[1px] w-14 bg-gradient-to-r from-[#7dd1ff] to-[#f6c866]" />
+    </div>
+    <motion.div
+      className="absolute inset-0"
+      style={{ background: 'linear-gradient(120deg, rgba(125,209,255,0.25), rgba(246,200,102,0.05))' }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: [0, 0.25, 0] }}
+      transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+    />
+  </motion.div>
+);
 
 const Services = () => (
   <section id="services" className="relative py-24 bg-gradient-to-b from-[#f7f9ff] via-white to-[#eef2f7]">

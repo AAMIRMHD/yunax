@@ -80,13 +80,6 @@ const Hero = () => {
               Get Consultation
             </a>
           </motion.div>
-
-          <div className="flex items-center justify-center mt-12">
-            <div className="flex items-center gap-3 text-slate-500">
-              <div className="scroll-indicator" />
-              <span className="text-xs uppercase tracking-[0.35em]">Scroll</span>
-            </div>
-          </div>
         </motion.div>
       </div>
     </section>

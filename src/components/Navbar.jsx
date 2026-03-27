@@ -12,6 +12,7 @@ const links = [
 
 const Navbar = () => {
   const [solid, setSolid] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setSolid(window.scrollY > 60);
@@ -50,7 +51,42 @@ const Navbar = () => {
         >
           Secure My Business
         </a>
+
+        <button
+          className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-full border border-slate-200 bg-white/70 shadow-sm"
+          aria-label="Toggle menu"
+          onClick={() => setOpen((v) => !v)}
+        >
+          <span className="w-5 h-[2px] bg-slate-800 block relative">
+            <span className={`absolute left-0 top-[-6px] w-5 h-[2px] bg-slate-800 transition ${open ? 'rotate-45 translate-y-[6px]' : ''}`} />
+            <span className={`absolute left-0 top-[6px] w-5 h-[2px] bg-slate-800 transition ${open ? '-rotate-45 -translate-y-[6px]' : ''}`} />
+          </span>
+        </button>
       </div>
+
+      {open && (
+        <div className="md:hidden px-6 pb-4">
+          <div className="rounded-2xl border border-slate-200 bg-white/90 shadow-lg flex flex-col divide-y divide-slate-200 overflow-hidden">
+            {links.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="px-4 py-3 text-sm text-slate-800 hover:bg-slate-50"
+                onClick={() => setOpen(false)}
+              >
+                {link.label}
+              </a>
+            ))}
+            <a
+              href="/contact"
+              className="px-4 py-3 text-sm font-semibold text-slate-900 bg-gradient-to-r from-[#0ea5e9]/15 to-[#f6a600]/15 hover:from-[#0ea5e9]/25 hover:to-[#f6a600]/25"
+              onClick={() => setOpen(false)}
+            >
+              Secure My Business
+            </a>
+          </div>
+        </div>
+      )}
     </motion.nav>
   );
 };
