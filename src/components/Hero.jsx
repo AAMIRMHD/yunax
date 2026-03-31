@@ -49,7 +49,8 @@ const Hero = () => {
             transition={{ delay: 0.1, duration: 0.9, ease: 'easeOut' }}
             className="text-4xl md:text-6xl font-semibold leading-tight"
           >
-            Yunax Digital Pvt. Ltd
+           
+            Built for speed. Designed for dominance.
           </motion.h1>
 
           <motion.p
@@ -58,7 +59,7 @@ const Hero = () => {
             transition={{ delay: 0.2, duration: 0.8 }}
             className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto"
           >
-            Empowering Businesses with Advanced IT, Security & Networking Solutions
+             Your setup defines your game  we make it unbeatable
           </motion.p>
 
           <motion.div

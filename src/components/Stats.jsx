@@ -46,12 +46,10 @@ const Counter = ({ value, label, suffix }) => {
 const Stats = () => (
   <section id="stats" className="py-20 bg-gradient-to-b from-[#f5f7fb] to-white">
     <div className="max-w-6xl mx-auto px-6 space-y-10">
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-        <div>
-          <p className="text-sm uppercase tracking-[0.35em] text-slate-500">Proof of performance</p>
-          <h2 className="text-3xl md:text-4xl font-semibold mt-2 text-slate-900">Metrics that matter</h2>
-        </div>
-        <p className="text-slate-600 max-w-xl">Operational excellence proven across industries with measurable outcomes.</p>
+      <div className="flex flex-col items-center text-center gap-3">
+        <p className="text-sm uppercase tracking-[0.35em] text-slate-500">Proof of performance</p>
+        <h2 className="text-3xl md:text-4xl font-semibold text-slate-900">Metrics that matter</h2>
+        <p className="text-slate-600 max-w-2xl">Operational excellence proven across industries with measurable outcomes.</p>
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

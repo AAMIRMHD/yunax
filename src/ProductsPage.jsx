@@ -18,10 +18,18 @@ const ProductsPage = () => (
   <div className="bg-white text-slate-900 min-h-screen">
     <Navbar />
     <main className="pt-24 pb-16 space-y-12">
-      <section className="max-w-6xl mx-auto px-6 space-y-4">
-        <p className="text-sm uppercase tracking-[0.35em] text-slate-500">Products</p>
-        <h1 className="text-3xl md:text-4xl font-semibold">Product Lines & Solutions</h1>
-        <p className="text-slate-600 leading-relaxed">Discover the categories we specialize in, pairing top-tier brands with custom builds and services tailored to your needs.</p>
+      <section className="max-w-6xl mx-auto px-6 space-y-4 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="space-y-3"
+        >
+          <p className="text-sm uppercase tracking-[0.35em] text-slate-500">Products</p>
+          <h1 className="text-3xl md:text-4xl font-semibold">Product Lines & Solutions</h1>
+          <p className="text-slate-600 leading-relaxed max-w-3xl mx-auto">Discover the categories we specialize in, pairing top-tier brands with custom builds and services tailored to your needs.</p>
+        </motion.div>
       </section>
 
       <section className="max-w-6xl mx-auto px-6">

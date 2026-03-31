@@ -107,13 +107,17 @@ const cardVariants = {
 const GPUs = () => (
   <section id="gpus" className="py-20 bg-gradient-to-b from-white to-[#f7f9ff]">
     <div className="max-w-6xl mx-auto px-6 space-y-10">
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-        <div>
-          <p className="text-sm uppercase tracking-[0.35em] text-slate-500">GPUs</p>
-          <h2 className="text-3xl md:text-4xl font-semibold text-slate-900">Flagship Radeon™ XTX Lineup</h2>
-        </div>
-        <p className="text-slate-600 max-w-xl">Handpicked high-end boards for elite gaming, creation, and compute—optimized for security, reliability, and raw throughput.</p>
-      </div>
+      <motion.div
+        className="flex flex-col items-center text-center gap-3"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.4 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+      >
+        <p className="text-sm uppercase tracking-[0.35em] text-slate-500">GPUs</p>
+        <h2 className="text-3xl md:text-4xl font-semibold text-slate-900">Flagship Radeon™ XTX Lineup</h2>
+        <p className="text-slate-600 max-w-2xl">Handpicked high-end boards for elite gaming, creation, and compute—optimized for security, reliability, and raw throughput.</p>
+      </motion.div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {gpus.map((gpu) => (

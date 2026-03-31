@@ -8,7 +8,6 @@ const Footer = () => (
       <div className="flex flex-wrap gap-4 text-slate-600">
         <a href="/" className="hover:text-slate-900">Home</a>
         <a href="/about" className="hover:text-slate-900">About</a>
-        <a href="/services" className="hover:text-slate-900">Services</a>
         <a href="/products" className="hover:text-slate-900">Products</a>
         <a href="/gpus" className="hover:text-slate-900">GPUs</a>
         <a href="/contact" className="hover:text-slate-900">Contact</a>

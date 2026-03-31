@@ -20,6 +20,13 @@ const aboutStats = [
   { label: 'Years in Business', value: 22, suffix: '' },
 ];
 
+const achievements = [
+  { title: 'Award 2012 – Sri Lankan Ministry', desc: 'Best Customer Network and Satisfaction Award', img: '/ach/ach1.jpg' },
+  { title: 'KMCT 2012–2013', desc: 'Best Business Performance Award', img: '/ach/ach2.jpg' },
+  { title: 'Asus Taiwan 2011–2012', desc: 'Best Retailer Award', img: '/ach/ach3.jpg' },
+  { title: 'Direct Customer Interaction', desc: 'Recognized for hands-on service excellence', img: '/ach/ach4.jpg' },
+];
+
 const StatCard = ({ value, suffix, label }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-50px' });
@@ -60,16 +67,30 @@ const AboutPage = () => (
     <Navbar />
     <main className="pt-24 pb-16">
       <section className="max-w-6xl mx-auto px-6 space-y-8">
-        <p className="text-sm uppercase tracking-[0.35em] text-slate-500">About Us</p>
-        <h1 className="text-3xl md:text-4xl font-semibold">Advanced Technologies to Our Customers at an Affordable Cost</h1>
-        <p className="text-slate-600 leading-relaxed">
-          We, Yunax Digital Pvt Ltd, are the sister concern of M/s. YOHANA COMPUTERS, started 22 years ago in Mumbai. We shifted to Calicut in 2002 and today are a leading wholesaler and retailer for servers, desktops, laptops, net tops, and peripherals, serving both enterprise and retail customers.
-        </p>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.35 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="space-y-3 text-center"
+        >
+          <p className="text-sm uppercase tracking-[0.35em] text-slate-500">About Us</p>
+          <h1 className="text-3xl md:text-4xl font-semibold">Advanced Technologies to Our Customers at an Affordable Cost</h1>
+          <p className="text-slate-600 leading-relaxed">
+            We, Yunax Digital Pvt Ltd, are the sister concern of M/s. YOHANA COMPUTERS, started 22 years ago in Mumbai. We shifted to Calicut in 2002 and today are a leading wholesaler and retailer for servers, desktops, laptops, net tops, and peripherals, serving both enterprise and retail customers.
+          </p>
+        </motion.div>
       </section>
 
       <section className="max-w-6xl mx-auto px-6 space-y-10 mt-12">
         <div className="grid lg:grid-cols-2 gap-8 items-start">
-          <div className="space-y-3">
+          <motion.div
+            className="space-y-3"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+          >
             <div className="overflow-hidden rounded-2xl shadow-lg relative">
               <img src="/newsecabout/ourstory.jpeg" alt="Our Story" className="w-full h-[392px] object-cover" style={{ aspectRatio: '1 / 1' }} />
               <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/30 flex items-center justify-center">
@@ -79,8 +100,14 @@ const AboutPage = () => (
             <p className="text-slate-600 leading-relaxed">
               We provide consultancy across all IT areas with a 22-year legacy from Mumbai to Calicut. From our roots as Yohana Computers to the premium Yunax Digital experience, we’ve evolved with our customers—modernizing infrastructure, hardening security, and scaling performance. Our Pottammal, Calicut hub features curated products, live demos, and labs so clients can see and feel emerging tech before adoption. We stay hands-on from strategy to execution, ensuring every rollout is stable, secure, future-ready, and tied to measurable ROI.
             </p>
-          </div>
-          <div className="space-y-3">
+          </motion.div>
+          <motion.div
+            className="space-y-3"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
+          >
             <div className="overflow-hidden rounded-2xl shadow-lg relative">
               <img src="/newsecabout/ourmission.jpeg" alt="Our Mission" className="w-full h-[392px] object-cover" style={{ aspectRatio: '1 / 1' }} />
               <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/30 flex items-center justify-center">
@@ -90,40 +117,16 @@ const AboutPage = () => (
             <p className="text-slate-600 leading-relaxed">
               To bring the most advanced technology to the common people at an affordable cost—without sacrificing reliability or security. We believe in transparent partnerships, measurable outcomes, and long-term value. Every deployment is secure by default, scalable by design, and adaptable as needs evolve, so customers stay ahead as technology moves.
             </p>
-          </div>
+          </motion.div>
         </div>
 
-        <div className="space-y-4">
-          <h2 className="text-2xl font-semibold">Our Services</h2>
-          <div className="space-y-4 text-slate-600 leading-relaxed">
-            <div>
-              <h3 className="font-semibold text-slate-900">Consultancy</h3>
-              <p>
-                Full-stack IT advisory covering security posture, infrastructure health checks, backup strategy, and network architecture. We benchmark your estate against business outcomes and deliver a prioritized, actionable roadmap.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-slate-900">Security Solutions</h3>
-              <p>
-                Layered defense against hacking, malware, phishing, and credential theft. Hardened endpoints, segmentation, and always-on monitoring keep users productive while minimizing risk and cost.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-slate-900">Networking</h3>
-              <p>
-                Wired, wireless, and hybrid LAN/WAN designs built for low latency and high availability. From campus rollouts to branch expansions, we tune performance so every connection is reliable.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-slate-900">CCTV Camera Installation</h3>
-              <p>
-                End-to-end CCTV deployments with DVR/NVR options, camera selection guidance, and clean cabling—paired with responsive support to keep sites protected around the clock.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-3">
+        <motion.div
+          className="space-y-3 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.55, ease: 'easeOut' }}
+        >
           <h2 className="text-2xl font-semibold">Visit Our Space</h2>
           <p className="text-slate-600 leading-relaxed">A glimpse of the Yunax experience center where customers explore, demo, and co-design solutions.</p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -144,7 +147,7 @@ const AboutPage = () => (
               </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       <section className="max-w-6xl mx-auto px-6 mt-10">
@@ -156,7 +159,15 @@ const AboutPage = () => (
       </section>
 
       <section className="max-w-6xl mx-auto px-6 mt-14 space-y-6">
-        <h2 className="text-2xl font-semibold">Meet The Team</h2>
+        <motion.h2
+          className="text-2xl font-semibold text-center"
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.55, ease: 'easeOut' }}
+        >
+          Meet The Team
+        </motion.h2>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
           {team.map((member) => (
             <div key={member.name} className="glass border border-slate-200 rounded-2xl p-4 space-y-3 text-center">
@@ -167,6 +178,52 @@ const AboutPage = () => (
               <div className="text-sm text-slate-600">{member.role}</div>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-6 mt-14 space-y-6 overflow-hidden">
+        <motion.div
+          className="flex flex-col items-center gap-3 text-center"
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.55, ease: 'easeOut' }}
+        >
+          <span className="inline-flex items-center justify-center px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-600 bg-slate-100 rounded-full">Achievements</span>
+          <h3 className="text-2xl font-semibold">Milestones that celebrate our service, performance, and customer-first mindset.</h3>
+        </motion.div>
+        <div className="relative pt-2">
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-white via-white/80 to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-white via-white/80 to-transparent" />
+          <motion.div
+            className="flex gap-5"
+            animate={{ x: ['0%', '-50%'] }}
+            transition={{ duration: 26, ease: 'linear', repeat: Infinity }}
+          >
+            {[...achievements, ...achievements].map((item, idx) => (
+              <motion.div
+                key={`${item.title}-${idx}`}
+                className="flex-none w-[260px] rounded-2xl overflow-hidden border border-slate-200 shadow-lg shadow-slate-900/5 bg-white"
+                whileHover={{ y: -6, scale: 1.015 }}
+                transition={{ type: 'spring', stiffness: 220, damping: 18 }}
+              >
+                <div className="h-40 w-full overflow-hidden relative">
+                  <motion.img
+                    src={item.img}
+                    alt={item.title}
+                    className="w-full h-full object-cover"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.35 }}
+                  />
+                  <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/30 to-transparent" />
+                </div>
+                <div className="p-4 space-y-2">
+                  <div className="text-[11px] uppercase tracking-[0.24em] text-slate-500 line-clamp-2">{item.title}</div>
+                  <div className="text-sm font-semibold text-slate-900 leading-snug line-clamp-2">{item.desc}</div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
     </main>

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Services from './components/Services';
-import Gallery from './components/Gallery';
 import Stats from './components/Stats';
 import About from './components/About';
 import Testimonials from './components/Testimonials';
@@ -24,7 +23,6 @@ const App = () => {
       <main className="relative z-10">
         <Hero />
         <Services />
-        <Gallery />
         <Stats />
         <About />
         <Brands />
