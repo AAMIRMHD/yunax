@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { ShoppingCart } from 'lucide-react';
+import AccountDropdown from './AccountDropdown';
 
 const links = [
   { label: 'Home', href: '/' },
@@ -12,11 +14,43 @@ const links = [
 const Navbar = () => {
   const [solid, setSolid] = useState(false);
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     const onScroll = () => setSolid(window.scrollY > 60);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('user');
+      if (stored) setUser(JSON.parse(stored));
+    } catch {
+      setUser(null);
+    }
+    const loadCartCount = () => {
+      try {
+        const raw = localStorage.getItem('cartItems');
+        const list = raw ? JSON.parse(raw) : [];
+        const count = list.reduce((sum, i) => sum + (i.qty || 1), 0);
+        setCartCount(count);
+      } catch {
+        setCartCount(0);
+      }
+    };
+    loadCartCount();
+    const onStorage = (e) => {
+      if (e.key === 'cartItems') loadCartCount();
+    };
+    const onCustom = () => loadCartCount();
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('cart-updated', onCustom);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('cart-updated', onCustom);
+    };
   }, []);
 
   return (
@@ -44,12 +78,35 @@ const Navbar = () => {
           ))}
         </div>
 
-        <a
-          href="/contact"
-          className="hidden sm:inline-flex items-center gap-2 px-4 py-2 text-sm rounded-full bg-gradient-to-r from-[#0ea5e9] to-[#f6a600] text-black font-semibold shadow-[0_10px_30px_rgba(14,165,233,0.35)] hover:shadow-[0_10px_40px_rgba(246,166,0,0.35)] transition"
-        >
-          Secure My Business
-        </a>
+        <div className="hidden sm:flex items-center gap-3">
+          <a
+            href="/contact"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm rounded-full bg-gradient-to-r from-[#0ea5e9] to-[#f6a600] text-black font-semibold shadow-[0_10px_30px_rgba(14,165,233,0.35)] hover:shadow-[0_10px_40px_rgba(246,166,0,0.35)] transition"
+          >
+            Secure My Business
+          </a>
+          <a
+            href="/cart"
+            className="relative px-3 py-2 text-sm rounded-full border border-slate-200 text-slate-800 hover:border-slate-300 inline-flex items-center gap-2"
+          >
+            <ShoppingCart size={16} /> Cart
+            {cartCount > 0 && (
+              <span className="absolute -right-2 -top-2 h-5 min-w-[20px] px-1 rounded-full bg-slate-900 text-white text-[11px] font-semibold flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
+          </a>
+          {user ? (
+            <AccountDropdown user={user} />
+          ) : (
+            <a
+              href="/login"
+              className="px-4 py-2 text-sm rounded-full border border-slate-200 text-slate-800 hover:border-slate-300"
+            >
+              Login
+            </a>
+          )}
+        </div>
 
         <button
           className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-full border border-slate-200 bg-white/70 shadow-sm"
@@ -83,6 +140,33 @@ const Navbar = () => {
             >
               Secure My Business
             </a>
+            <a
+              href="/cart"
+              className="px-4 py-3 text-sm text-slate-800 hover:bg-slate-50 flex items-center gap-2"
+              onClick={() => setOpen(false)}
+            >
+              <ShoppingCart size={16} /> Cart {cartCount > 0 ? `(${cartCount})` : ''}
+            </a>
+            {!user ? (
+              <a
+                href="/login"
+                className="px-4 py-3 text-sm text-slate-800 hover:bg-slate-50"
+                onClick={() => setOpen(false)}
+              >
+                Login
+              </a>
+            ) : (
+              <button
+                onClick={() => {
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('user');
+                  window.location.href = '/';
+                }}
+                className="px-4 py-3 text-sm text-left text-red-600 hover:bg-slate-50"
+              >
+                Logout
+              </button>
+            )}
           </div>
         </div>
       )}

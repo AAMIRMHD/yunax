@@ -8,6 +8,8 @@ import Testimonials from './components/Testimonials';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import Brands from './components/Brands';
+import Categories from './components/Categories';
+import FeaturedProducts from './components/FeaturedProducts';
 import useLenis from './hooks/useLenis';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -23,6 +25,8 @@ const App = () => {
       <main className="relative z-10">
         <Hero />
         <Services />
+        <FeaturedProducts />
+        <Categories />
         <Stats />
         <About />
         <Brands />

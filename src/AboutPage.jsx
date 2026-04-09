@@ -5,7 +5,6 @@ import { useRef, useEffect, useState } from 'react';
 
 const team = [
   { name: 'ABDUSALAM', role: 'Chairman', img: '/team/chairman.png' },
-  { name: 'Ummer Yohana', role: 'Managing Director', img: '/team/ummer.png' },
   { name: 'Ahammad Finash', role: 'Director', img: '/team/finash.png' },
   { name: 'ABDUL BASITH P P', role: 'Director', img: '/team/basith.png' },
   { name: 'Muhammed Sirajudheen P P', role: 'Director', img: '/team/siraj.png' },
@@ -18,13 +17,6 @@ const aboutStats = [
   { label: 'Customers', value: 250, suffix: 'k+' },
   { label: 'Products', value: 500, suffix: '+' },
   { label: 'Years in Business', value: 22, suffix: '' },
-];
-
-const achievements = [
-  { title: 'Award 2012 – Sri Lankan Ministry', desc: 'Best Customer Network and Satisfaction Award', img: '/ach/ach1.jpg' },
-  { title: 'KMCT 2012–2013', desc: 'Best Business Performance Award', img: '/ach/ach2.jpg' },
-  { title: 'Asus Taiwan 2011–2012', desc: 'Best Retailer Award', img: '/ach/ach3.jpg' },
-  { title: 'Direct Customer Interaction', desc: 'Recognized for hands-on service excellence', img: '/ach/ach4.jpg' },
 ];
 
 const StatCard = ({ value, suffix, label }) => {
@@ -181,51 +173,7 @@ const AboutPage = () => (
         </div>
       </section>
 
-      <section className="max-w-6xl mx-auto px-6 mt-14 space-y-6 overflow-hidden">
-        <motion.div
-          className="flex flex-col items-center gap-3 text-center"
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.55, ease: 'easeOut' }}
-        >
-          <span className="inline-flex items-center justify-center px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-600 bg-slate-100 rounded-full">Achievements</span>
-          <h3 className="text-2xl font-semibold">Milestones that celebrate our service, performance, and customer-first mindset.</h3>
-        </motion.div>
-        <div className="relative pt-2">
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-white via-white/80 to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-white via-white/80 to-transparent" />
-          <motion.div
-            className="flex gap-5"
-            animate={{ x: ['0%', '-50%'] }}
-            transition={{ duration: 26, ease: 'linear', repeat: Infinity }}
-          >
-            {[...achievements, ...achievements].map((item, idx) => (
-              <motion.div
-                key={`${item.title}-${idx}`}
-                className="flex-none w-[260px] rounded-2xl overflow-hidden border border-slate-200 shadow-lg shadow-slate-900/5 bg-white"
-                whileHover={{ y: -6, scale: 1.015 }}
-                transition={{ type: 'spring', stiffness: 220, damping: 18 }}
-              >
-                <div className="h-40 w-full overflow-hidden relative">
-                  <motion.img
-                    src={item.img}
-                    alt={item.title}
-                    className="w-full h-full object-cover"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.35 }}
-                  />
-                  <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/30 to-transparent" />
-                </div>
-                <div className="p-4 space-y-2">
-                  <div className="text-[11px] uppercase tracking-[0.24em] text-slate-500 line-clamp-2">{item.title}</div>
-                  <div className="text-sm font-semibold text-slate-900 leading-snug line-clamp-2">{item.desc}</div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+      {/* Achievements section removed per request */}
     </main>
     <Footer />
   </div>
