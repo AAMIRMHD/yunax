@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
 import AdminLayout from './AdminLayout';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const API = import.meta.env.VITE_API_URL || 'https://yunax.onrender.com';
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const API = import.meta.env.VITE_API_URL || 'https://yunax.onrender.com';
 
 const FeaturedProducts = () => {
   const [items, setItems] = useState([]);

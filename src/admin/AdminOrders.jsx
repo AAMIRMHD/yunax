@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { CheckCircle, Clock3 } from 'lucide-react';
 import AdminLayout from './AdminLayout';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const API = import.meta.env.VITE_API_URL || 'https://yunax.onrender.com';
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
