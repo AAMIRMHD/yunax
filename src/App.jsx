@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Services from './components/Services';
@@ -10,27 +9,29 @@ import Footer from './components/Footer';
 import Brands from './components/Brands';
 import Categories from './components/Categories';
 import FeaturedProducts from './components/FeaturedProducts';
-import useLenis from './hooks/useLenis';
-import { AnimatePresence, motion } from 'framer-motion';
+import SectionDivider from './components/motion/SectionDivider';
 
 const App = () => {
-  useLenis();
-  const [loading] = useState(false);
-
   return (
     <div className="text-slate-900">
-      <AnimatePresence>{loading && null}</AnimatePresence>
-
       <Navbar />
       <main className="relative z-10">
         <Hero />
+        <SectionDivider />
         <Services />
+        <SectionDivider />
         <FeaturedProducts />
+        <SectionDivider />
         <Categories />
+        <SectionDivider />
         <Stats />
+        <SectionDivider />
         <About />
+        <SectionDivider />
         <Brands />
+        <SectionDivider />
         <Testimonials />
+        <SectionDivider />
         <Contact />
       </main>
       <Footer />

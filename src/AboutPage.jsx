@@ -5,11 +5,9 @@ import { useRef, useEffect, useState } from 'react';
 
 const team = [
   { name: 'ABDUSALAM', role: 'Chairman', img: '/team/chairman.png' },
-  { name: 'Ahammad Finash', role: 'Director', img: '/team/finash.png' },
   { name: 'ABDUL BASITH P P', role: 'Director', img: '/team/basith.png' },
   { name: 'Muhammed Sirajudheen P P', role: 'Director', img: '/team/siraj.png' },
   { name: 'Sabith', role: 'Director', img: '/team/sabith.png' },
-  { name: 'SHAMSHIDA UMMER', role: 'Director', img: '/team/shamshida.png' },
 ];
 
 const aboutStats = [
@@ -160,14 +158,14 @@ const AboutPage = () => (
         >
           Meet The Team
         </motion.h2>
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="flex flex-wrap justify-center gap-6">
           {team.map((member) => (
-            <div key={member.name} className="glass border border-slate-200 rounded-2xl p-4 space-y-3 text-center">
-              <div className="h-28 w-28 mx-auto rounded-full overflow-hidden bg-slate-100">
+            <div key={member.name} className="glass border border-slate-200 rounded-2xl p-4 space-y-3 text-center w-full sm:w-[calc(50%-12px)] md:w-[calc(33.33%-16px)] max-w-[320px]">
+              <div className="h-28 w-28 mx-auto rounded-full overflow-hidden bg-slate-100 ring-4 ring-slate-50 shadow-inner">
                 <img src={member.img} alt={member.name} className="w-full h-full object-cover" />
               </div>
               <div className="text-lg font-semibold text-slate-900">{member.name}</div>
-              <div className="text-sm text-slate-600">{member.role}</div>
+              <div className="text-sm text-slate-600 font-medium tracking-wide uppercase">{member.role}</div>
             </div>
           ))}
         </div>

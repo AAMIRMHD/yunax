@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import Tilt from './ui/Tilt';
 
 const gpus = [
   {
@@ -104,64 +105,122 @@ const cardVariants = {
   hover: { y: -8, scale: 1.02 },
 };
 
-const GPUs = () => (
-  <section id="gpus" className="py-20 bg-gradient-to-b from-white to-[#f7f9ff]">
-    <div className="max-w-6xl mx-auto px-6 space-y-10">
-      <motion.div
-        className="flex flex-col items-center text-center gap-3"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.4 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
-      >
-        <p className="text-sm uppercase tracking-[0.35em] text-slate-500">GPUs</p>
-        <h2 className="text-3xl md:text-4xl font-semibold text-slate-900">Flagship Radeon™ XTX Lineup</h2>
-        <p className="text-slate-600 max-w-2xl">Handpicked high-end boards for elite gaming, creation, and compute—optimized for security, reliability, and raw throughput.</p>
-      </motion.div>
-
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {gpus.map((gpu) => (
-          <motion.div
-            key={gpu.key}
-            className="glass border border-slate-200 rounded-2xl overflow-hidden shadow-lg flex flex-col"
-            variants={cardVariants}
-            initial="initial"
-            whileHover="hover"
-            transition={{ type: 'spring', stiffness: 220, damping: 18 }}
-          >
-            <div className="relative h-44 overflow-hidden">
-              <motion.img
-                src={gpu.img}
-                alt={gpu.name}
-                className="w-full h-full object-cover"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.35 }}
-              />
-            </div>
-            <div className="p-5 space-y-3 flex-1">
-              <h3 className="text-lg font-semibold text-slate-900 leading-tight">{gpu.name}</h3>
-              <ul className="text-sm text-slate-600 space-y-1 list-disc list-inside">
-                {gpu.highlights.map((h) => (
-                  <li key={h}>{h}</li>
-                ))}
-              </ul>
-              <div className="text-base font-semibold text-slate-900">{gpu.price}</div>
-            </div>
-            <div className="px-5 pb-5">
-              <a
-                href={gpu.link}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center justify-center w-full px-4 py-2 rounded-xl bg-gradient-to-r from-[#0ea5e9] to-[#f6a600] text-black font-semibold shadow-md hover:shadow-lg transition"
-              >
-                Learn more
-              </a>
-            </div>
-          </motion.div>
-        ))}
+const GPUs = () => {
+  return (
+    <section id="gpus" className="py-24 bg-white relative overflow-hidden">
+      {/* Dynamic Background Accents */}
+      <div className="absolute top-0 right-0 w-full h-full pointer-events-none -z-10">
+        <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-amber-500/10 blur-[130px] rounded-full translate-x-1/2" />
+        <div className="absolute bottom-1/4 left-0 w-[500px] h-[500px] bg-primary/10 blur-[120px] rounded-full -translate-x-1/2" />
       </div>
-    </div>
-  </section>
-);
+
+      <div className="max-w-7xl mx-auto px-6 space-y-16">
+        <motion.div
+          className="flex flex-col items-center text-center gap-4"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 mb-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-700">Flagship Series</p>
+          </div>
+          <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight leading-tight max-w-3xl">
+            The Elite <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-primary">Radeon™ XTX</span> Lineup
+          </h2>
+          <p className="text-slate-500 max-w-2xl text-lg font-medium leading-relaxed">
+            Unleash unparalleled throughput with our curated selection of high-end boards, optimized for security, reliability, and raw compute power.
+          </p>
+        </motion.div>
+
+        <motion.div 
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.1 }}
+          variants={{
+            hidden: { opacity: 0 },
+            show: {
+              opacity: 1,
+              transition: { staggerChildren: 0.15 }
+            }
+          }}
+          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12"
+        >
+          {gpus.map((gpu) => (
+            <motion.div
+              key={gpu.key}
+              variants={{
+                hidden: { opacity: 0, y: 30 },
+                show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
+              }}
+              className="group relative cursor-pointer"
+            >
+              <Tilt maxRotation={10} className="h-full">
+                {/* Card Glow */}
+                <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-amber-500/10 to-transparent rounded-[40px] blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10" />
+                
+                <div className="h-full glass border border-slate-200/60 rounded-[40px] overflow-hidden shadow-2xl shadow-slate-200/40 flex flex-col bg-white transition-all duration-500 hover:border-amber-500/40 hover:shadow-xl hover:shadow-amber-500/5">
+                  <div className="relative h-52 overflow-hidden bg-slate-50 p-6 flex items-center justify-center border-b border-slate-100">
+                    <div className="absolute inset-0 bg-gradient-to-br from-slate-100/30 to-white pointer-events-none" />
+                    <motion.img
+                      src={gpu.img}
+                      alt={gpu.name}
+                      className="w-full h-full object-contain relative z-10 transition-transform duration-700 group-hover:scale-110"
+                    />
+                    
+                    <div className="absolute bottom-4 right-4 bg-white/80 backdrop-blur-md border border-slate-200/50 px-3 py-1.5 rounded-2xl shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">View Gallery</p>
+                    </div>
+                  </div>
+
+                  <div className="p-8 flex flex-col flex-1 space-y-6">
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-bold text-slate-900 leading-tight group-hover:text-amber-600 transition-colors min-h-[56px] line-clamp-2">
+                        {gpu.name}
+                      </h3>
+                    </div>
+
+                    <div className="space-y-4">
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Technical Highlights</p>
+                      <ul className="text-sm text-slate-600 space-y-3">
+                        {gpu.highlights.map((h, idx) => (
+                          <li key={idx} className="flex gap-3 leading-relaxed">
+                            <div className="w-1.5 h-1.5 rounded-full bg-amber-500/40 mt-1.5 flex-shrink-0" />
+                            <span className="font-medium text-slate-500">{h}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="pt-6 border-t border-slate-100 mt-auto flex flex-col gap-6">
+                      <div className="flex items-center justify-between">
+                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Base MSRP</span>
+                         <span className="text-2xl font-black text-slate-900 tracking-tighter">{gpu.price}</span>
+                      </div>
+                      
+                      <a
+                        href={gpu.link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="group/btn relative overflow-hidden flex items-center justify-center h-14 rounded-2xl bg-slate-900 text-white shadow-xl shadow-slate-900/10 transition-all duration-500 hover:bg-amber-600"
+                      >
+                        <div className="flex items-center gap-3 relative z-10">
+                          <span className="text-xs font-black uppercase tracking-[0.2em]">Acquire Board</span>
+                          <svg className="w-5 h-5 transition-transform group-hover/btn:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-amber-600 to-amber-500 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </Tilt>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+};
 
 export default GPUs;

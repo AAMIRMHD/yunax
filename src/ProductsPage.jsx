@@ -2,122 +2,12 @@ import { useEffect, useMemo, useState } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { motion } from 'framer-motion';
-import { Search, ShoppingCart, Star, User } from 'lucide-react';
-
-const API = import.meta.env.VITE_API_URL || 'https://yunax.onrender.com';
-
-const demoProducts = [
-  {
-    name: 'AuraBook 14 Pro',
-    slug: 'demo-aurabook-14-pro',
-    category: 'Laptops',
-    priceCents: 129900,
-    stock: 8,
-    featured: true,
-    description: '14" QHD, Ryzen 7, 16GB, 1TB NVMe, RTX 4060.',
-    images: [],
-  },
-  {
-    name: 'Titan 15 Gaming',
-    slug: 'demo-titan-15-gaming',
-    category: 'Laptops',
-    priceCents: 118500,
-    stock: 12,
-    description: '15.6" 165Hz, Intel i7, 32GB RAM, 1TB NVMe, RTX 4070.',
-    images: [],
-  },
-  {
-    name: 'Inferno RTX Station',
-    slug: 'demo-inferno-rtx-station',
-    category: 'Gaming',
-    priceCents: 189900,
-    stock: 4,
-    featured: true,
-    description: 'i7 14700K, RTX 4080 Super, 32GB DDR5, 2TB NVMe.',
-    images: [],
-  },
-  {
-    name: 'Helios 27" QHD 165Hz',
-    slug: 'demo-helios-27q',
-    category: 'Gaming',
-    priceCents: 29900,
-    stock: 16,
-    description: 'IPS, 165Hz, HDR400, USB-C 65W, height adjustable.',
-    images: [],
-  },
-  {
-    name: 'AeroMesh AXE Router',
-    slug: 'demo-aeromesh-axe',
-    category: 'Networking Products',
-    priceCents: 18900,
-    stock: 14,
-    description: 'Tri-band Wi‑Fi 6E, 2.5G WAN/LAN, mesh ready.',
-    images: [],
-  },
-  {
-    name: 'NovaX 2TB NVMe Gen4',
-    slug: 'demo-novax-2tb',
-    category: 'SSD / HDD',
-    priceCents: 16900,
-    stock: 22,
-    description: 'PCIe 4.0, 7400/6800 MBps, DRAM cache, 5-year warranty.',
-    images: [],
-  },
-  {
-    name: 'Flux TKL Wireless',
-    slug: 'demo-flux-tkl',
-    category: 'Accessories',
-    priceCents: 8900,
-    stock: 30,
-    description: 'Tri-mode hot-swap mechanical, PBT keycaps, per-key RGB.',
-    images: [],
-  },
-  {
-    name: 'Glide Pro Wireless Mouse',
-    slug: 'demo-glide-pro',
-    category: 'Accessories',
-    priceCents: 6200,
-    stock: 40,
-    description: '55g lightweight, PixArt 3395, 4K polling ready, USB-C.',
-    images: [],
-  },
-  {
-    name: 'CorePower 850W Platinum',
-    slug: 'demo-corepower-850w',
-    category: 'Power Supply (SMPS)',
-    priceCents: 12400,
-    stock: 18,
-    description: 'Fully modular, 80+ Platinum, 10-year warranty.',
-    images: [],
-  },
-  {
-    name: 'Pulse ANC Studio Headset',
-    slug: 'demo-pulse-anc',
-    category: 'Headphones',
-    priceCents: 12900,
-    stock: 25,
-    description: 'Hybrid ANC, LDAC, dual mics, 40mm drivers, 50h battery.',
-    images: [],
-  },
-  {
-    name: 'Nebula Mini Workstation',
-    slug: 'demo-nebula-mini',
-    category: 'Desktop PCs',
-    priceCents: 154900,
-    stock: 6,
-    description: 'ITX, Ryzen 9, 32GB DDR5, 2TB Gen4 NVMe, RTX 4070 Super.',
-    images: [],
-  },
-  {
-    name: 'Vega X 7800 XT',
-    slug: 'demo-vega-7800xt',
-    category: 'Graphics Cards',
-    priceCents: 54900,
-    stock: 14,
-    description: '16GB GDDR6, dual-fan, PCIe 4.0, ideal for 1440p high refresh.',
-    images: [],
-  },
-];
+import Reveal from './components/motion/Reveal';
+import { Heart, LayoutGrid, Search, ShoppingCart, SlidersHorizontal, X } from 'lucide-react';
+import { API } from './lib/api';
+import { defaultProducts } from './lib/defaultProducts';
+import Tilt from './components/ui/Tilt';
+import { addToWishlist, getAuthToken, loadWishlist, removeFromWishlist } from './lib/wishlist';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -126,6 +16,10 @@ const ProductsPage = () => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState('featured');
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [wishlistSlugs, setWishlistSlugs] = useState([]);
+  const [wishlistMessage, setWishlistMessage] = useState('');
 
   useEffect(() => {
     const load = async () => {
@@ -134,48 +28,24 @@ const ProductsPage = () => {
         const res = await fetch(`${API}/products`);
         if (!res.ok) throw new Error('Failed to load products');
         const data = await res.json();
-        const base = Array.isArray(data) ? data : [];
-
-        // Map for quick slug lookup to avoid duplicates
-        const slugSet = new Set(base.map((p) => p.slug));
-
-        // Ensure each key category has at least 4 items by appending demo fillers
-        const ensureCategoryMin = (category, min = 8) => {
-          let count = base.filter((p) => p.category === category).length;
-          if (count >= min) return;
-          const pool = demoProducts.filter((p) => p.category === category);
-          let idx = 0;
-          while (count < min && pool.length) {
-            const template = pool[idx % pool.length];
-            const clone = {
-              ...template,
-              slug: `${template.slug}-demo-${count}`,
-              name: `${template.name} (Demo ${count + 1})`,
-              _id: `${template.slug}-demo-${count}`,
-              id: `${template.slug}-demo-${count}`,
-            };
-            if (!slugSet.has(clone.slug)) {
-              slugSet.add(clone.slug);
-              base.push(clone);
-              count += 1;
-            }
-            idx += 1;
-          }
-        };
-
-        ['Laptops', 'Gaming', 'Desktop PCs', 'Graphics Cards', 'Accessories', 'Networking Products', 'SSD / HDD', 'Power Supply (SMPS)'].forEach((cat) =>
-          ensureCategoryMin(cat)
-        );
-
-        setProducts(base.length ? base : demoProducts.slice(0, 12));
+        const nextProducts = Array.isArray(data) && data.length > 0 ? data : defaultProducts;
+        setProducts(nextProducts);
       } catch (err) {
-        setError(err.message);
-        setProducts(demoProducts.slice(0, 12)); // fallback to demo
+        setError('');
+        setProducts(defaultProducts);
       } finally {
         setLoading(false);
       }
     };
     load();
+  }, []);
+
+  useEffect(() => {
+    const token = getAuthToken();
+    if (!token) return;
+    loadWishlist()
+      .then((items) => setWishlistSlugs(items.map((item) => item.slug)))
+      .catch(() => {});
   }, []);
 
   const categories = useMemo(() => {
@@ -214,6 +84,13 @@ const ProductsPage = () => {
     return Array.from(map.entries());
   }, [filtered]);
 
+  const activeFilterCount = (activeCategory !== 'All' ? 1 : 0) + (sort !== 'featured' ? 1 : 0);
+
+  const clearFilters = () => {
+    setActiveCategory('All');
+    setSort('featured');
+  };
+
   const addToCart = (product) => {
     try {
       const raw = localStorage.getItem('cartItems');
@@ -238,180 +115,390 @@ const ProductsPage = () => {
     }
   };
 
-  return (
-    <div className="bg-white text-slate-900 min-h-screen">
-      <Navbar />
-      <main className="pt-20 pb-16 space-y-10 bg-white">
-        <section className="max-w-6xl mx-auto px-6 space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="space-y-2">
-              <p className="text-xs uppercase tracking-[0.32em] text-slate-500">Shop</p>
-              <h1 className="text-3xl font-semibold text-slate-900">Products</h1>
-              <p className="text-slate-600">Browse laptops, PCs, components, and accessories.</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => (localStorage.getItem('token') ? (window.location.href = '/cart') : (window.location.href = '/login'))}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 text-slate-800 hover:border-slate-300 shadow-sm bg-white"
-              >
-                <ShoppingCart size={16} /> Cart
-              </button>
-              <button
-                onClick={() => {
-                  const token = localStorage.getItem('token');
-                  if (token) window.location.href = '/account';
-                  else window.location.href = '/login';
-                }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 text-slate-800 hover:border-slate-300 shadow-sm bg-white"
-              >
-                <User size={16} /> Account
-              </button>
-            </div>
-          </div>
+  const toggleWishlist = async (product) => {
+    if (!getAuthToken()) {
+      window.location.href = '/login';
+      return;
+    }
+    try {
+      const isSaved = wishlistSlugs.includes(product.slug);
+      const nextItems = isSaved ? await removeFromWishlist(product.slug) : await addToWishlist(product);
+      setWishlistSlugs(nextItems.map((item) => item.slug));
+      setWishlistMessage(isSaved ? `${product.name} removed from wishlist.` : `${product.name} added to wishlist.`);
+      window.setTimeout(() => setWishlistMessage(''), 1800);
+    } catch (err) {
+      setWishlistMessage(err.message || 'Could not update wishlist.');
+      window.setTimeout(() => setWishlistMessage(''), 2200);
+    }
+  };
 
+  return (
+    <div className="bg-white text-slate-900 min-h-screen selection:bg-primary/20">
+      <Navbar />
+      <main className="pt-24 pb-16 space-y-8 sm:pt-28 sm:space-y-10 lg:space-y-14">
+        {/* Header Section */}
+        <section className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-end lg:gap-10">
+            <motion.div 
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ duration: 0.8 }}
+               className="space-y-3 sm:space-y-4"
+            >
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
+                <span className="w-1 h-1 rounded-full bg-primary" />
+                <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-primary">Catalog</p>
+              </div>
+              <h1 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-amber-500">Products</span>
+              </h1>
+              <p className="max-w-xl text-sm font-medium leading-6 text-slate-500 sm:text-base sm:leading-relaxed">
+                The world's most powerful components, curated for professionals.
+              </p>
+            </motion.div>
+            
+          </div>
+        </section>
+
+        {/* Search & Sort Bar */}
+        <section className="sticky top-20 z-30 mx-auto max-w-7xl px-4 sm:top-24 sm:px-6">
           <motion.div
-            className="border border-slate-200 rounded-2xl p-4 shadow-sm bg-white flex flex-col gap-3"
             initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.45, ease: 'easeOut' }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-[1.5rem] border border-slate-200 bg-white/95 p-1.5 shadow-xl shadow-slate-200/40 backdrop-blur-xl sm:rounded-3xl sm:p-3"
           >
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="relative flex-1 min-w-[220px]">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <div className="flex items-center gap-2 lg:grid lg:grid-cols-[minmax(220px,1fr),auto,auto] lg:gap-3">
+              <div className="relative min-w-0 flex-1">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300 sm:left-4" size={16} />
                 <input
                   type="text"
-                  placeholder="Search GPUs, laptops, components, accessories"
-                  className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 focus:border-slate-300 outline-none text-sm"
+                  placeholder="Search hardware..."
+                  className="min-h-10 w-full rounded-full border border-transparent bg-slate-50 py-2 pl-10 pr-3 text-xs font-bold text-slate-900 outline-none transition-all placeholder:text-slate-300 focus:border-primary/20 focus:bg-white sm:min-h-12 sm:rounded-2xl sm:py-3 sm:pl-11 sm:pr-4 sm:text-sm"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                 />
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <label className="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200">Sort</label>
+              
+              <button
+                type="button"
+                onClick={() => setCategoriesOpen(true)}
+                aria-label="Open product categories"
+                className={`relative flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-full border px-3 text-[10px] font-bold uppercase tracking-wider transition-all sm:h-11 sm:min-w-[132px] sm:px-4 sm:text-xs lg:rounded-xl ${
+                  activeCategory !== 'All'
+                    ? 'border-primary bg-primary text-white shadow-lg shadow-primary/20'
+                    : 'border-slate-200 bg-white text-slate-700 shadow-sm shadow-slate-200/60'
+                }`}
+              >
+                <LayoutGrid size={15} />
+                <span className="sm:hidden">Cat</span>
+                <span className="hidden sm:inline">Categories</span>
+                {activeCategory !== 'All' && (
+                  <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full border-2 border-white bg-slate-900 px-1 text-[9px] leading-none text-white sm:static sm:h-5 sm:min-w-5 sm:border-0 sm:bg-white/20 sm:text-[10px]">
+                    1
+                  </span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setFiltersOpen(true)}
+                aria-label="Open product filters"
+                className={`relative flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-full border px-3 text-[10px] font-bold uppercase tracking-wider transition-all lg:hidden ${
+                  sort !== 'featured'
+                    ? 'border-slate-900 bg-slate-900 text-white shadow-lg shadow-slate-900/15'
+                    : 'border-slate-200 bg-white text-slate-700 shadow-sm shadow-slate-200/60'
+                }`}
+              >
+                <SlidersHorizontal size={15} />
+                <span>Filter</span>
+                {sort !== 'featured' && (
+                  <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full border-2 border-white bg-primary px-1 text-[9px] leading-none text-white">
+                    1
+                  </span>
+                )}
+              </button>
+
+              <label className="relative hidden w-full lg:block lg:w-auto">
+                <SlidersHorizontal className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
                 <select
                   value={sort}
                   onChange={(e) => setSort(e.target.value)}
-                  className="px-3 py-2 rounded-xl bg-white text-slate-900 border border-slate-200 text-sm"
+                  className="min-h-11 w-full cursor-pointer appearance-none rounded-xl border border-transparent bg-slate-50 py-2 pl-10 pr-8 text-[10px] font-bold uppercase tracking-widest text-slate-600 outline-none lg:w-auto"
                 >
                   <option value="featured">Featured</option>
-                  <option value="priceAsc">Price: Low to High</option>
-                  <option value="priceDesc">Price: High to Low</option>
-                  <option value="newest">Newest</option>
+                  <option value="priceAsc">Price low to high</option>
+                  <option value="priceDesc">Price high to low</option>
                 </select>
-              </div>
-            </div>
-
-            <div className="flex gap-3 items-center overflow-x-auto no-scrollbar py-1">
-              {categories.map((label) => {
-                const active = activeCategory === label;
-                return (
-                  <button
-                    key={label}
-                    onClick={() => setActiveCategory(label)}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-full border text-sm whitespace-nowrap transition ${
-                      active
-                        ? 'border-slate-900 bg-slate-900 text-white'
-                        : 'border-slate-200 bg-white text-slate-800 hover:border-slate-300'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
+              </label>
             </div>
           </motion.div>
         </section>
 
-        <section className="max-w-6xl mx-auto px-6 space-y-10">
-          {loading && <p className="text-slate-600 text-sm">Loading…</p>}
-          {error && <p className="text-red-600 text-sm">{error}</p>}
-          {!loading && !error && grouped.length === 0 && <p className="text-slate-600 text-sm">No products found.</p>}
-
-          {grouped.map(([label, items]) => (
+        {categoriesOpen && (
+          <div className="fixed inset-0 z-50">
+            <button
+              type="button"
+              aria-label="Close categories"
+              className="absolute inset-0 bg-slate-950/40"
+              onClick={() => setCategoriesOpen(false)}
+            />
             <motion.div
-              key={label}
-              className="space-y-4"
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.25 }}
-              transition={{ duration: 0.45, ease: 'easeOut' }}
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              className="absolute inset-x-0 bottom-0 max-h-[82vh] overflow-y-auto rounded-t-3xl bg-white p-5 shadow-2xl sm:bottom-6 sm:left-1/2 sm:max-w-xl sm:-translate-x-1/2 sm:rounded-3xl"
             >
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">{label}</h2>
-                <span className="text-xs uppercase tracking-[0.25em] text-slate-500">{items.length} picks</span>
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.22em] text-primary">Categories</p>
+                  <h2 className="mt-1 text-xl font-black text-slate-900">Choose a category</h2>
+                  <p className="mt-1 text-sm font-semibold text-slate-400">
+                    {filtered.length} product{filtered.length === 1 ? '' : 's'} shown
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setCategoriesOpen(false)}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600"
+                  aria-label="Close categories"
+                >
+                  <X size={18} />
+                </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-5">
-                {items.slice(0, 8).map((product) => {
-                  const price = `₹${Math.round((product.priceCents || 0) / 100).toLocaleString('en-IN')}`;
-                  const thumb = product.images?.[0];
-                  const stock = product.stock ?? null;
+              <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                {categories.map((label) => {
+                  const active = activeCategory === label;
+                  const count = label === 'All' ? products.length : products.filter((product) => product.category === label).length;
                   return (
-                    <div
-                      key={product._id || product.id || product.slug || product.name}
-                      onClick={() => product.slug && (window.location.href = `/products/${product.slug}`)}
-                      className="relative border border-slate-200 rounded-2xl bg-white p-4 shadow-sm flex flex-col gap-3 hover:-translate-y-1 hover:shadow-md transition cursor-pointer overflow-hidden"
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={() => {
+                        setActiveCategory(label);
+                        setCategoriesOpen(false);
+                      }}
+                      className={`min-h-[64px] rounded-2xl border px-3 py-3 text-left transition-all ${
+                        active
+                          ? 'border-primary bg-primary text-white shadow-lg shadow-primary/20'
+                          : 'border-slate-100 bg-slate-50 text-slate-700 hover:border-slate-200 hover:bg-white'
+                      }`}
                     >
-                      <div className="relative h-44 rounded-xl bg-gradient-to-br from-slate-100 via-white to-slate-200 overflow-hidden flex items-center justify-center">
+                      <span className="block text-xs font-black uppercase tracking-wider">{label}</span>
+                      <span className={`mt-1 block text-[11px] font-semibold ${active ? 'text-white/80' : 'text-slate-400'}`}>
+                        {count} item{count === 1 ? '' : 's'}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {filtersOpen && (
+          <div className="fixed inset-0 z-50 lg:hidden">
+            <button
+              type="button"
+              aria-label="Close filters"
+              className="absolute inset-0 bg-slate-950/40"
+              onClick={() => setFiltersOpen(false)}
+            />
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              className="absolute inset-x-0 bottom-0 max-h-[82vh] overflow-y-auto rounded-t-3xl bg-white p-5 shadow-2xl"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.22em] text-primary">Filters</p>
+                  <h2 className="mt-1 text-xl font-black text-slate-900">Find products faster</h2>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setFiltersOpen(false)}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600"
+                  aria-label="Close filters"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="mt-6 space-y-6">
+                <div>
+                  <p className="mb-3 text-sm font-bold text-slate-900">Category</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFiltersOpen(false);
+                      setCategoriesOpen(true);
+                    }}
+                    className="flex min-h-11 w-full items-center justify-center rounded-xl bg-slate-100 px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-700"
+                  >
+                    Open categories
+                  </button>
+                </div>
+
+                <div>
+                  <p className="mb-3 text-sm font-bold text-slate-900">Sort by</p>
+                  <div className="grid gap-2">
+                    {[
+                      ['featured', 'Featured'],
+                      ['priceAsc', 'Price low to high'],
+                      ['priceDesc', 'Price high to low'],
+                    ].map(([value, label]) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => setSort(value)}
+                        className={`min-h-11 rounded-xl px-4 py-3 text-left text-xs font-bold uppercase tracking-wider ${
+                          sort === value ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 grid grid-cols-2 gap-3 border-t border-slate-100 pt-4">
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="min-h-11 rounded-xl border border-slate-200 text-sm font-bold text-slate-700"
+                >
+                  Clear
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFiltersOpen(false)}
+                  className="min-h-11 rounded-xl bg-primary text-sm font-bold text-white shadow-lg shadow-primary/20"
+                >
+                  Show products
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+
+        <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 sm:pb-28">
+          {loading && (
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+               {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+                 <div key={i} className="h-[280px] rounded-2xl bg-slate-50 animate-shimmer sm:h-[420px]" />
+               ))}
+            </div>
+          )}
+          
+          {error && <p className="text-red-600 font-bold bg-rose-50 p-6 rounded-2xl border border-rose-100 text-center">{error}</p>}
+          {wishlistMessage && (
+            <div className="mb-4 rounded-[18px] border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-medium text-blue-700">
+              {wishlistMessage}
+            </div>
+          )}
+          {!loading && !error && filtered.length === 0 && (
+            <div className="space-y-5 py-20 text-center sm:space-y-6 sm:py-24">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 opacity-50 sm:h-20 sm:w-20 sm:rounded-3xl">
+                 <Search size={32} className="text-slate-300" />
+              </div>
+              <p className="text-lg font-bold uppercase tracking-widest text-slate-900 sm:text-xl">No Matches Found</p>
+              <p className="mx-auto max-w-sm text-sm font-medium leading-6 text-slate-500 sm:text-base">Try adjusting your filters or search terms to find what you're looking for.</p>
+            </div>
+          )}
+ 
+          <motion.div 
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.08 }}
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: { staggerChildren: 0.06, delayChildren: 0.05 }
+              }
+            }}
+            className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4"
+          >
+            {filtered.map((product) => {
+              const price = `₹${Math.round((product.priceCents || 0) / 100).toLocaleString('en-IN')}`;
+              const thumb = product.images?.[0];
+              const stock = product.stock ?? null;
+              const isWishlisted = wishlistSlugs.includes(product.slug);
+              
+              return (
+                <motion.div
+                  key={product._id || product.id || product.slug || product.name}
+                  variants={{
+                    hidden: { opacity: 0, y: 28, scale: 0.96 },
+                    show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] } }
+                  }}
+                  onClick={() => product.slug && (window.location.href = `/products/${product.slug}`)}
+                  className="group relative min-w-0"
+                >
+                  <Tilt maxRotation={8} className="h-full">
+                    <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white transition-all duration-500 hover:border-primary/45 hover:shadow-2xl hover:shadow-primary/5 h-full flex flex-col">
+                      <div className="relative flex h-36 items-center justify-center overflow-hidden bg-slate-50/50 p-3 sm:h-60 sm:p-7 lg:h-64 lg:p-8">
                         {thumb ? (
-                          <img src={thumb} alt={product.name} className="w-full h-full object-cover" />
+                          <motion.img 
+                            whileHover={{ scale: 1.08 }}
+                            src={thumb} alt={product.name} 
+                            className="w-full h-full object-contain mix-blend-multiply transition-transform duration-500" 
+                          />
                         ) : (
-                          <div className="h-full w-full flex items-center justify-center">
-                            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-slate-200 to-slate-100 text-slate-500 font-semibold grid place-items-center shadow-inner">
-                              {product.name?.slice(0, 2)?.toUpperCase() || '—'}
-                            </div>
-                          </div>
+                          <div className="text-3xl font-black text-slate-200">{product.name?.slice(0, 2)}</div>
                         )}
-                        <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-medium bg-white/90 text-slate-800 border border-slate-200 shadow-sm">{product.category || 'Featured'}</div>
-                        {product.featured && (
-                          <div className="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200 flex items-center gap-1 shadow-sm">
-                            <Star size={12} /> Featured
+                        
+                        <div className="absolute left-2 top-2 sm:left-4 sm:top-4">
+                          <div className="max-w-[112px] rounded-lg border border-slate-100 bg-white/90 px-2 py-1 shadow-sm sm:max-w-none">
+                             <p className="truncate text-[8px] font-black uppercase tracking-wider text-primary sm:text-[9px] sm:tracking-widest">{product.category || 'Elite'}</p>
                           </div>
-                        )}
-                      </div>
-
-                      <div className="relative space-y-1">
-                        <div className="font-semibold text-slate-900 leading-tight line-clamp-2">{product.name}</div>
-                        <div className="text-sm text-slate-600 line-clamp-2">{product.description || product.category}</div>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-1">
-                          <div className="text-lg font-semibold text-slate-900">{price}</div>
-                          {stock !== null && (
-                            <div className={`text-xs ${stock > 5 ? 'text-emerald-600' : stock > 0 ? 'text-amber-600' : 'text-rose-600'}`}>
-                              {stock > 5 ? 'In stock' : stock > 0 ? `${stock} left` : 'Restocking'}
-                            </div>
-                          )}
                         </div>
-                        <div className="flex gap-2">
+                        <button
+                          type="button"
+                          aria-label={isWishlisted ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
+                          className={`absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full border bg-white/95 shadow-sm transition sm:right-4 sm:top-4 ${
+                            isWishlisted ? 'border-rose-100 text-rose-600' : 'border-slate-100 text-slate-500 hover:text-rose-600'
+                          }`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleWishlist(product);
+                          }}
+                        >
+                          <Heart size={16} fill={isWishlisted ? 'currentColor' : 'none'} />
+                        </button>
+                      </div>
+
+                      <div className="space-y-3 p-3 sm:space-y-4 sm:p-5 flex-1 flex flex-col justify-between">
+                        <div className="space-y-1">
+                          <h3 className="line-clamp-2 min-h-[40px] text-sm font-bold leading-5 text-slate-900 transition-colors group-hover:text-primary sm:min-h-0 sm:text-base sm:leading-normal sm:line-clamp-1">{product.name}</h3>
+                          <p className="text-slate-400 text-[11px] font-medium tracking-tight line-clamp-1">{product.description || product.category}</p>
+                        </div>
+
+                        <div className="flex items-center justify-between gap-2 border-t border-slate-50 pt-3 sm:gap-3">
+                          <div className="space-y-0.5">
+                            <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Price</p>
+                            <p className="text-base font-black text-slate-900 sm:text-lg">{price}</p>
+                          </div>
+                          
                           <button
-                            className="text-xs px-3 py-2 rounded-full border border-slate-200 text-slate-800 hover:border-slate-300 bg-white"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              window.location.href = `/products/${product.slug}`;
-                            }}
-                          >
-                            View
-                          </button>
-                          <button
-                            className="text-xs px-3 py-2 rounded-full bg-slate-900 text-white hover:bg-slate-800"
+                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white shadow-lg shadow-slate-900/10 transition-colors hover:bg-primary sm:h-11 sm:w-11"
                             onClick={(e) => {
                               e.stopPropagation();
                               addToCart(product);
                             }}
                           >
-                            Add
+                            <ShoppingCart size={16} />
                           </button>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
-            </motion.div>
-          ))}
+                  </Tilt>
+                </motion.div>
+              );
+            })}
+          </motion.div>
         </section>
       </main>
       <Footer />

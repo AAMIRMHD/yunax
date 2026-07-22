@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AlertTriangle, Package, ShoppingCart, TrendingUp } from 'lucide-react';
 import AdminLayout from './AdminLayout';
-
-const API = import.meta.env.VITE_API_URL || 'https://yunax.onrender.com';
+import { API } from '../lib/api';
 
 const StatCard = ({ icon: Icon, label, value, tone = 'default' }) => {
   const toneClass =
@@ -33,7 +32,7 @@ const AdminDashboard = () => {
 
   const token = (() => {
     try {
-      return localStorage.getItem('token');
+      return localStorage.getItem('admin_token');
     } catch (e) {
       return null;
     }
@@ -68,7 +67,7 @@ const AdminDashboard = () => {
 
   const metrics = useMemo(() => {
     const totalRevenue = orders.reduce((sum, o) => sum + (Number(o.totalCents) || 0), 0) / 100;
-    const pending = orders.filter((o) => o.status === 'pending').length;
+    const pending = orders.filter((o) => (o.status || '').toLowerCase() === 'pending').length;
     const lowStock = products.filter((p) => (p.stock ?? 0) < 5).length;
     return {
       productCount: products.length,
@@ -115,7 +114,9 @@ const AdminDashboard = () => {
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold text-slate-900">₹{((o.totalCents || 0) / 100).toFixed(0)}</p>
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500">{o.status || 'pending'}</p>
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500">
+                      {o.paymentMethod || 'cod'} • {o.status || 'pending'}
+                    </p>
                   </div>
                 </div>
               ))

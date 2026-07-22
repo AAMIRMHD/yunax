@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { motion } from 'framer-motion';
-
-const API = import.meta.env.VITE_API_URL || 'https://yunax.onrender.com';
+import { API } from './lib/api';
 
 const emptyProduct = {
   name: '',
@@ -24,13 +23,25 @@ const AdminManagePage = () => {
   const [editForm, setEditForm] = useState(emptyProduct);
   const token = (() => {
     try {
-      return localStorage.getItem('token');
-    } catch {
+      return localStorage.getItem('admin_token');
+    } catch (e) {
       return null;
     }
   })();
 
   useEffect(() => {
+    try {
+      const stored = localStorage.getItem('admin_user');
+      const user = stored ? JSON.parse(stored) : null;
+      if (user?.role !== 'admin') {
+        window.location.href = '/admin/login';
+        return;
+      }
+    } catch (err) {
+      window.location.href = '/admin/login';
+      return;
+    }
+
     const load = async () => {
       try {
         setLoading(true);

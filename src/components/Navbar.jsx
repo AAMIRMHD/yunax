@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingCart } from 'lucide-react';
+import { Heart, ShoppingCart, User } from 'lucide-react';
 import AccountDropdown from './AccountDropdown';
+import { getStoredCartItems, reconcileStoredCartWithCatalog } from '../lib/cart';
+import { fadeUpChild, staggerContainer } from '../lib/motion';
 
 const links = [
   { label: 'Home', href: '/' },
@@ -27,20 +29,28 @@ const Navbar = () => {
     try {
       const stored = localStorage.getItem('user');
       if (stored) setUser(JSON.parse(stored));
-    } catch {
+    } catch (e) {
       setUser(null);
     }
+
     const loadCartCount = () => {
       try {
-        const raw = localStorage.getItem('cartItems');
-        const list = raw ? JSON.parse(raw) : [];
+        const list = getStoredCartItems();
         const count = list.reduce((sum, i) => sum + (i.qty || 1), 0);
         setCartCount(count);
-      } catch {
+      } catch (e) {
         setCartCount(0);
       }
     };
+
+    const syncCartCount = async () => {
+      await reconcileStoredCartWithCatalog();
+      loadCartCount();
+    };
+
     loadCartCount();
+    syncCartCount();
+
     const onStorage = (e) => {
       if (e.key === 'cartItems') loadCartCount();
     };
@@ -58,36 +68,44 @@ const Navbar = () => {
       initial={{ y: -40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.7, ease: 'easeOut' }}
-      className={`fixed top-0 inset-x-0 z-40 ${solid ? 'backdrop-blur-xl bg-white/85 shadow-lg border-b border-slate-200/70' : 'bg-transparent'}`}
+      className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${
+        solid ? 'border-b border-slate-200/50 bg-white/90 shadow-md backdrop-blur-xl' : 'border-b border-white/20 bg-white/40 shadow-sm backdrop-blur-md'
+      }`}
     >
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4 text-slate-800">
-        <a href="/" className="flex items-center gap-3">
-          <img src="/logo/logo.png" alt="Yunax Digital logo" className="h-10 w-auto object-contain drop-shadow-sm" />
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 text-slate-800 sm:px-6 sm:py-4">
+        <a href="/" className="flex items-center gap-3 rounded-full border border-white/70 bg-white px-3 py-2 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md">
+          <img src="/logo/logo.png" alt="Yunax Digital logo" className="h-9 w-auto object-contain drop-shadow-sm sm:h-10" />
         </a>
 
-        <div className="hidden md:flex items-center gap-6 text-sm">
+        <motion.div
+          className="hidden md:flex items-center gap-6 text-sm"
+          variants={staggerContainer(0.08, 0.15)}
+          initial="hidden"
+          animate="visible"
+        >
           {links.map((link) => (
-            <a
+            <motion.a
               key={link.href}
               href={link.href}
-              className="relative pb-1 group text-slate-700 hover:text-slate-900"
+              variants={fadeUpChild}
+              className="relative pb-1 group text-slate-700 hover:text-slate-900 font-semibold transition-colors duration-300"
             >
               {link.label}
               <span className="absolute left-0 -bottom-1 h-[2px] w-full scale-x-0 group-hover:scale-x-100 bg-gradient-to-r from-[#0ea5e9] to-[#f6a600] origin-left transition-transform duration-300" />
-            </a>
+            </motion.a>
           ))}
-        </div>
+        </motion.div>
 
-        <div className="hidden sm:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-3">
           <a
             href="/contact"
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm rounded-full bg-gradient-to-r from-[#0ea5e9] to-[#f6a600] text-black font-semibold shadow-[0_10px_30px_rgba(14,165,233,0.35)] hover:shadow-[0_10px_40px_rgba(246,166,0,0.35)] transition"
+            className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(15,23,42,0.15)] transition-all duration-300 hover:bg-slate-800 hover:scale-105 hover:shadow-lg"
           >
-            Secure My Business
+            Consultation
           </a>
           <a
             href="/cart"
-            className="relative px-3 py-2 text-sm rounded-full border border-slate-200 text-slate-800 hover:border-slate-300 inline-flex items-center gap-2"
+            className="relative inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-800 transition-all duration-300 hover:border-slate-300 hover:scale-105 hover:bg-white"
           >
             <ShoppingCart size={16} /> Cart
             {cartCount > 0 && (
@@ -96,32 +114,70 @@ const Navbar = () => {
               </span>
             )}
           </a>
+          {user && (
+            <a
+              href="/wishlist"
+              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-3 py-2 text-sm text-slate-800 transition-all duration-300 hover:border-slate-300 hover:scale-105 hover:bg-white"
+            >
+              <Heart size={16} /> Wishlist
+            </a>
+          )}
           {user ? (
             <AccountDropdown user={user} />
           ) : (
             <a
               href="/login"
-              className="px-4 py-2 text-sm rounded-full border border-slate-200 text-slate-800 hover:border-slate-300"
+              className="rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm text-slate-800 transition-all duration-300 hover:border-slate-300 hover:scale-105 hover:bg-white"
             >
               Login
             </a>
           )}
         </div>
 
-        <button
-          className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-full border border-slate-200 bg-white/70 shadow-sm"
-          aria-label="Toggle menu"
-          onClick={() => setOpen((v) => !v)}
-        >
-          <span className="w-5 h-[2px] bg-slate-800 block relative">
-            <span className={`absolute left-0 top-[-6px] w-5 h-[2px] bg-slate-800 transition ${open ? 'rotate-45 translate-y-[6px]' : ''}`} />
-            <span className={`absolute left-0 top-[6px] w-5 h-[2px] bg-slate-800 transition ${open ? '-rotate-45 -translate-y-[6px]' : ''}`} />
-          </span>
-        </button>
+        <div className="flex items-center gap-2 lg:hidden">
+          {user && (
+            <a
+              href="/wishlist"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/80 text-slate-800 shadow-sm"
+              aria-label="Open wishlist"
+            >
+              <Heart size={17} />
+            </a>
+          )}
+          <a
+            href="/cart"
+            className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/80 text-slate-800 shadow-sm"
+            aria-label="Open cart"
+          >
+            <ShoppingCart size={17} />
+            {cartCount > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-slate-900 px-1 text-[10px] font-semibold text-white">
+                {cartCount}
+              </span>
+            )}
+          </a>
+          <a
+            href={user ? '/account' : '/login'}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/80 text-slate-800 shadow-sm"
+            aria-label={user ? 'Open account profile' : 'Log in'}
+          >
+            <User size={17} />
+          </a>
+          <button
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/80 shadow-sm md:hidden"
+            aria-label="Toggle menu"
+            onClick={() => setOpen((v) => !v)}
+          >
+            <span className="w-5 h-[2px] bg-slate-800 block relative">
+              <span className={`absolute left-0 top-[-6px] w-5 h-[2px] bg-slate-800 transition ${open ? 'rotate-45 translate-y-[6px]' : ''}`} />
+              <span className={`absolute left-0 top-[6px] w-5 h-[2px] bg-slate-800 transition ${open ? '-rotate-45 -translate-y-[6px]' : ''}`} />
+            </span>
+          </button>
+        </div>
       </div>
 
       {open && (
-        <div className="md:hidden px-6 pb-4">
+        <div className="px-4 pb-4 md:hidden sm:px-6">
           <div className="rounded-2xl border border-slate-200 bg-white/90 shadow-lg flex flex-col divide-y divide-slate-200 overflow-hidden">
             {links.map((link) => (
               <a
@@ -147,6 +203,15 @@ const Navbar = () => {
             >
               <ShoppingCart size={16} /> Cart {cartCount > 0 ? `(${cartCount})` : ''}
             </a>
+            {user && (
+              <a
+                href="/wishlist"
+                className="px-4 py-3 text-sm text-slate-800 hover:bg-slate-50 flex items-center gap-2"
+                onClick={() => setOpen(false)}
+              >
+                <Heart size={16} /> Wishlist
+              </a>
+            )}
             {!user ? (
               <a
                 href="/login"

@@ -4,7 +4,10 @@ import { useEffect, useState } from 'react';
 const navItems = [
   { label: 'Dashboard', href: '/admin', match: (path) => path === '/admin' || path.startsWith('/admin/dashboard') },
   { label: 'Products', href: '/admin/products', match: (path) => path.startsWith('/admin/products') },
+  { label: 'Categories', href: '/admin/categories', match: (path) => path.startsWith('/admin/categories') },
+  { label: 'Reviews', href: '/admin/reviews', match: (path) => path.startsWith('/admin/reviews') },
   { label: 'Orders', href: '/admin/orders', match: (path) => path.startsWith('/admin/orders') },
+  { label: 'Support', href: '/admin/support', match: (path) => path.startsWith('/admin/support') },
   { label: 'Users', href: '/admin/users', match: (path) => path.startsWith('/admin/users') },
 ];
 
@@ -15,18 +18,6 @@ const AdminLayout = ({ title, description, children }) => {
 
   useEffect(() => {
     setPath(window.location.pathname);
-    try {
-      const stored = localStorage.getItem('user');
-      const user = stored ? JSON.parse(stored) : null;
-      const role = user?.role || '';
-      if (role !== 'admin') {
-        setIsAdmin(false);
-        window.location.href = '/';
-      }
-    } catch {
-      setIsAdmin(false);
-      window.location.href = '/';
-    }
   }, []);
 
   return (
@@ -60,8 +51,9 @@ const AdminLayout = ({ title, description, children }) => {
           <button
             onClick={() => {
               try {
-                localStorage.removeItem('token');
-                window.location.href = '/login';
+                localStorage.removeItem('admin_token');
+                localStorage.removeItem('admin_user');
+                window.location.href = '/admin/login';
               } catch (e) {
                 console.error(e);
               }

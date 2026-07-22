@@ -1,15 +1,16 @@
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
-const API = import.meta.env.VITE_API_URL || 'https://yunax.onrender.com';
+import { useState } from 'react';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { API } from './lib/api';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [loginMethod] = useState('email');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -34,59 +35,87 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="bg-white text-slate-900 min-h-screen">
+    <div className="bg-white text-slate-900 min-h-screen selection:bg-sky-100">
       <Navbar />
-      <main className="pt-24 pb-16">
-        <section className="max-w-md mx-auto px-6 text-center space-y-6">
+      <main className="pt-32 pb-16">
+        <section className="max-w-md mx-auto px-6">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.6 }}
-            transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="space-y-3"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-6"
           >
-            <p className="text-sm uppercase tracking-[0.35em] text-slate-500">Account</p>
-            <h1 className="text-3xl font-semibold">Login</h1>
-            <p className="text-slate-600">Sign in to access cart, orders, and admin tools.</p>
-          </motion.div>
+            <div className="text-center space-y-3">
+              <p className="text-sm uppercase tracking-[0.35em] text-slate-500">Welcome Back</p>
+              <h1 className="text-3xl font-semibold text-slate-900">Sign In</h1>
+              <p className="text-slate-600">Access your personalized tech experience.</p>
+            </div>
 
-          <form className="glass rounded-2xl p-6 border border-slate-200 space-y-4 shadow-md" onSubmit={handleLogin}>
-            <div className="text-left space-y-2">
-              <label className="text-sm text-slate-600">Email</label>
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200"
-                placeholder="you@example.com"
-                required
-              />
-            </div>
-            <div className="text-left space-y-2">
-              <label className="text-sm text-slate-600">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200"
-                placeholder="••••••••"
-                required
-              />
-            </div>
-            {error && <div className="text-sm text-red-600 text-left">{error}</div>}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full px-4 py-3 rounded-full bg-gradient-to-r from-[#0ea5e9] to-[#f6a600] text-black font-semibold shadow-md disabled:opacity-70"
-            >
-              {loading ? 'Signing in…' : 'Sign In'}
-            </button>
-            <div className="text-sm text-slate-600 text-left">
-              New here?{' '}
-              <button type="button" className="text-sky-600 hover:underline" onClick={() => (window.location.href = '/signup')}>
-                Create an account
+            <form className="bg-white rounded-3xl p-8 border border-slate-200 space-y-5 shadow-[0_20px_50px_rgba(0,0,0,0.05)]" onSubmit={handleLogin}>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700 ml-1">Email Address</label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 focus:border-slate-900 outline-none transition"
+                    placeholder="you@example.com"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between ml-1">
+                  <label className="text-sm font-medium text-slate-700">Password</label>
+                  <button
+                    type="button"
+                    onClick={() => (window.location.href = '/forgot-password')}
+                    className="text-xs text-sky-600 hover:text-sky-700 font-medium transition"
+                  >
+                    Forgot Password?
+                  </button>
+                </div>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full pl-11 pr-12 py-3 rounded-xl border border-slate-200 focus:border-slate-900 outline-none transition"
+                    placeholder="••••••••"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition p-2"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              {error && <div className="text-sm text-red-600 bg-red-50 p-3 rounded-xl border border-red-100 animate-shake">{error}</div>}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full px-4 py-4 rounded-xl bg-slate-900 text-white font-semibold shadow-lg hover:bg-slate-800 disabled:opacity-70 transition-all hover:translate-y-[-1px]"
+              >
+                {loading ? 'Signing in...' : 'Sign In'}
               </button>
-            </div>
-          </form>
+
+              <div className="text-sm text-slate-600 text-center pt-2">
+                Don't have an account?{' '}
+                <button type="button" className="text-sky-600 font-semibold hover:underline" onClick={() => (window.location.href = '/signup')}>
+                  Create An Account
+                </button>
+              </div>
+            </form>
+          </motion.div>
         </section>
       </main>
       <Footer />

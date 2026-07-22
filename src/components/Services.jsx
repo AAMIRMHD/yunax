@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import Tilt from './ui/Tilt';
 
 // Combined Solutions + Gallery items (deduped)
 const solutions = [
@@ -19,44 +20,35 @@ const cardVariants = {
   }),
 };
 
-const ServiceCard = ({ title, img, index }) => (
-  <motion.div
-    className="relative group h-72 rounded-2xl overflow-hidden glass neon-border card-glow"
-    whileHover={{ y: -6, scale: 1.02 }}
-    transition={{ type: 'spring', stiffness: 180, damping: 16 }}
-    variants={cardVariants}
-    initial="hidden"
-    whileInView="show"
-    viewport={{ once: true, amount: 0.25 }}
-    custom={index}
-  >
-    <motion.img
-      src={img}
-      alt={title}
-      className="absolute inset-0 w-full h-full object-cover"
-      whileHover={{ scale: 1.06 }}
-      transition={{ duration: 0.4 }}
-    />
-    <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/15 to-black/65" />
-    <div className="absolute inset-0 opacity-0 group-hover:opacity-85 transition duration-500" style={{ background: 'radial-gradient(circle at 30% 20%, rgba(14,165,233,0.14), transparent 48%)' }} />
-    <div className="absolute top-4 right-4 w-20 h-20 rounded-full bg-gradient-to-br from-[#7dd1ff]/40 to-[#f6c866]/20 blur-3xl" />
-    <div className="absolute bottom-0 p-6 space-y-2 z-10 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]">
-      <div className="text-2xl font-semibold">{title}</div>
-      <div className="h-[1px] w-14 bg-gradient-to-r from-[#7dd1ff] to-[#f6c866]" />
-    </div>
+const ServiceCard = ({ title, img, desc, index }) => (
+  <Tilt maxRotation={12} className="h-80 rounded-[28px] overflow-hidden">
     <motion.div
-      className="absolute inset-0"
-      style={{ background: 'linear-gradient(120deg, rgba(125,209,255,0.25), rgba(246,200,102,0.05))' }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: [0, 0.25, 0] }}
-      transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
-    />
-  </motion.div>
+      className="card-glow group relative h-full w-full overflow-hidden border border-slate-200/80 bg-slate-100 shadow-xl shadow-slate-200/50"
+      variants={cardVariants}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.25 }}
+      custom={index}
+    >
+      <motion.img
+        src={img}
+        alt={title}
+        className="absolute inset-0 w-full h-full object-cover"
+        whileHover={{ scale: 1.08 }}
+        transition={{ duration: 0.4 }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/25 to-black/82 pointer-events-none" />
+      <div className="absolute bottom-0 z-10 space-y-3 p-6 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)] pointer-events-none">
+        <div className="text-2xl font-semibold tracking-tight">{title}</div>
+        <div className="h-[1px] w-14 bg-gradient-to-r from-[#7dd1ff] to-[#f6c866]" />
+        <p className="line-clamp-2 text-sm leading-6 text-slate-200">{desc}</p>
+      </div>
+    </motion.div>
+  </Tilt>
 );
 
 const Services = () => (
-  <section id="services" className="relative py-24 bg-gradient-to-b from-[#f7f9ff] via-white to-[#eef2f7]">
-    <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_10%_20%,rgba(14,165,233,0.12),transparent_32%),radial-gradient(circle_at_90%_10%,rgba(246,166,0,0.14),transparent_30%)]" />
+  <section id="services" className="relative bg-white py-20 sm:py-24">
     <div className="max-w-6xl mx-auto px-6 relative space-y-12">
       <motion.div
         className="flex flex-col items-center text-center gap-3"
@@ -65,9 +57,9 @@ const Services = () => (
         transition={{ duration: 0.6, ease: 'easeOut' }}
         viewport={{ once: true, amount: 0.4 }}
       >
-        <p className="text-sm uppercase tracking-[0.35em] text-slate-500">Built for Real Setups</p>
-        <h2 className="text-3xl md:text-4xl font-semibold text-slate-900">Our Work & Expertise, All in One</h2>
-        <p className="text-slate-600 max-w-3xl">
+        <p className="luxury-eyebrow">Built for Real Setups</p>
+        <h2 className="luxury-title text-3xl md:text-5xl">White-glove service for every setup.</h2>
+        <p className="luxury-copy max-w-3xl">
           A single view of the solutions we deliver and real-world snapshots of how we build, secure, and support them.
         </p>
       </motion.div>

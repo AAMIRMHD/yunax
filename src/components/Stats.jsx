@@ -35,21 +35,24 @@ const Counter = ({ value, label, suffix }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className="glass rounded-2xl p-6 border border-slate-200 flex flex-col items-start gap-2"
+      className="luxury-card flex flex-col items-start gap-2 rounded-2xl p-6"
     >
-      <span className="text-4xl font-semibold text-slate-900">{display}{suffix}</span>
-      <span className="text-slate-500 uppercase tracking-[0.25em] text-xs">{label}</span>
+      <span className="text-4xl font-semibold text-slate-950">{display}{suffix}</span>
+      <span className="text-xs uppercase tracking-[0.25em] text-slate-500">{label}</span>
     </motion.div>
   );
 };
 
 const Stats = () => (
-  <section id="stats" className="py-20 bg-gradient-to-b from-[#f5f7fb] to-white">
-    <div className="max-w-6xl mx-auto px-6 space-y-10">
+  <section id="stats" className="relative bg-slate-50/50 border-y border-slate-100 py-20 text-slate-900 overflow-hidden">
+    {/* Glowing background highlights */}
+    <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_30%_20%,rgba(14,165,233,0.06),transparent_40%),radial-gradient(circle_at_75%_80%,rgba(246,166,0,0.06),transparent_40%)]" />
+    
+    <div className="max-w-6xl mx-auto px-6 space-y-10 relative z-10">
       <div className="flex flex-col items-center text-center gap-3">
-        <p className="text-sm uppercase tracking-[0.35em] text-slate-500">Proof of performance</p>
-        <h2 className="text-3xl md:text-4xl font-semibold text-slate-900">Metrics that matter</h2>
-        <p className="text-slate-600 max-w-2xl">Operational excellence proven across industries with measurable outcomes.</p>
+        <p className="text-sm font-bold uppercase tracking-[0.35em] text-blue-600">Proof of performance</p>
+        <h2 className="text-3xl font-black text-slate-900 md:text-4xl">Metrics that matter</h2>
+        <p className="max-w-2xl text-slate-500 font-medium">Operational excellence proven across industries with measurable outcomes.</p>
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -2,8 +2,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-
-const API = import.meta.env.VITE_API_URL || 'https://yunax.onrender.com';
+import { API } from './lib/api';
 
 const AdminPage = () => {
   const [products, setProducts] = useState([]);
@@ -13,7 +12,7 @@ const AdminPage = () => {
 
   const token = (() => {
     try {
-      return localStorage.getItem('token');
+      return localStorage.getItem('admin_token');
     } catch (e) {
       return null;
     }

@@ -8,8 +8,15 @@ const productSchema = new mongoose.Schema(
     currency: { type: String, default: 'INR' },
     category: { type: String, index: true },
     stock: { type: Number, default: 0 },
+    brand: { type: String, default: '' },
     description: { type: String, default: '' },
     images: { type: [String], default: [] },
+    highlights: { type: [String], default: [] },
+    specs: {
+      type: Map,
+      of: String,
+      default: {},
+    },
     featured: { type: Boolean, default: false },
   },
   { timestamps: true }
